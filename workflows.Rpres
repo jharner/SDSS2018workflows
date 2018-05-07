@@ -11,11 +11,11 @@ autosize: true
 The Data Science Process
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+The data science workflow or process starts with data extraction and end with a data produce. A common version of this process is illustrated by:   
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+![The Data Science Process](workflows-figure/dsciProcess.png)  
+
+This diagram is taken from [Doing Data Science](http://shop.oreilly.com/product/0636920028529.do). Notice the flow along the top where data is collected, processed, cleaned, and explored. Many conflate data science with the box on the right, i.e., machine learning algorithms and statistical models, but it is much more that that. Ultimately, we want to make decisions or to create data products, an iterative process.
 
 
 
