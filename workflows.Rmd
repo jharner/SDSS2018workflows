@@ -1,15 +1,14 @@
-Data Science Workflows
-========================================================
-author: Jim Harner
-date: 5/6/18
-autosize: true
+---
+title: "Habits"
+author: "Jim Harner"
+date: "5/6/18"
+output:
+  slidy_presentation: default
+---
 
-## Symposium on Data Science and Statistics
-### Reston, Virginia
-### May 16--19, 2018
+# Introduction
 
-The Data Science Process
-========================================================
+## The Data Science Process
 
 The data science workflow or process starts with data extraction and end with a data produce. A common version of this process is illustrated by:   
 
@@ -17,20 +16,17 @@ The data science workflow or process starts with data extraction and end with a 
 
 This diagram is taken from [Doing Data Science](http://shop.oreilly.com/product/0636920028529.do). Notice the flow along the top where data is collected, processed, cleaned, and explored. Many conflate data science with the box on the right, i.e., machine learning algorithms and statistical models, but it is much more that that. Ultimately, we want to make decisions or to create data products, an iterative process.
 
-Batch Architecture
-=======================================================
+## Batch Architecture
 
 ![Batch Architecture](workflows-figure/BatchArch.png) 
 
 
-Streaming Architecture
-=======================================================
+## Streaming Architecture
 
 ![Streaming Architecture](workflows-figure/StreamArch.png) 
 
 
-Hadley's Tidyverse
-=======================================================
+## Hadley's Tidyverse
 
 Hadley Wickham has a more abbreviated and specific version given here: [R for Data Science](http://r4ds.had.co.nz/introduction.html#what-you-will-learn).
 
@@ -45,13 +41,9 @@ A Dockerized versions of R called <[rocker](http://github.com/rocker-org/rocker)
 sudo docker run -p 8787:8787 rocker/verse
 ```
 
-Rspark
-======================================================
+## Rspark
 
 `rspark` extends `rocker` to the Spark ecosystem. The GitHub repo for `rspark` can be found [here](http://github.com/jharner/rspark). `rspark` consists of containers for RStudio, PostgreSQL, Hadoop, Hive, and Spark. By default, Spark has a master and two workers although it can also be run within the RStudio container as an option.
-
-
-
 
 
 
