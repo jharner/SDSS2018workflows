@@ -1,0 +1,108 @@
+\documentclass{beamer}
+\usepackage{beamerthemeSingapore}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{hyperref}
+\usepackage{Sweave}
+
+\title{Data Science Workflows\\
+  sdss 2018}
+
+\author{E. James Harner, Mark Lilback, and Will Foreman}
+\institute[West Virginia University]{
+  Department of Statistics\\
+  West Virginia University
+}
+
+\date[]{May 18, 2018}
+
+\subject{}
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+%\beamerdefaultoverlayspecification{<+->}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+% \SweaveOpts{concordance=TRUE}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Outline}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}[containsverbatim]
+  \frametitle{Big Data Architectures}
+What data architecture is needed for big data analytics?\\
+\vspace{0.5cm}
+Two principal architectures:
+\begin{description}
+	\item[\href{http://hortonworks.com/hdp/}{HDFS/Hadoop}] A software framework for distributed storage (\href{http://www.cloudera.com/content/cloudera/en/products-and-services/cdh/hdfs-and-mapreduce.html}{HDFS}) and distributed processing (\href{http://en.wikipedia.org/wiki/MapReduce}{MapReduce}).
+	\item[Tachyon/\href{http://amplab.cs.berkeley.edu/software/}{Spark}] A cluster computing environment using in-memory primitives rather than Hadoop's two-stage, disk-based MapReduce approach.
+\end{description}
+
+How do we access these big data processing architectures from R?
+\end{frame}
+
+\section{$\mbox{Rc}^2$ Server}
+
+\begin{frame}[containsverbatim]
+  \frametitle{Rc$^2$ Overview}
+$\mbox{Rc}^2$ (R cloud computing) has a web-based front-end to R which:
+\begin{itemize}
+	\item has an editor panel, an output panel, and slide-outs for files and environments;
+	\item is highly scalable;
+	\item allows collaboration (via shared sessions and workspaces);
+\end{itemize}
+
+Researchers can collaborate over the Internet without concern for code becoming out of sync.\\
+\vspace{0.2cm}
+Users can start long-running computations and $\mbox{Rc}^2$ will notify the user(s) when the process is complete.
+\end{frame}
+
+\begin{frame}[containsverbatim]
+  \frametitle{Overall Architecture}
+$\mbox{Rc}^2$ has a 4-tier architecture:
+\begin{description}
+	\item[client] web based\\
+	\item[app server] Jetty app-/web-server with Java servets using technologies such as  JPO, WebSockets, and RestKit\\
+	 \item[compute cloud] JSON over BSD sockets for R\\
+      	\item[databases] PostgreSQL for primary data storage, including meta-data, user profiles, files, .Rdata (as blobs), etc.\\
+	Apache CouchDB (NoSQL---key-value) for logging client/server JSON messages, including audio\\
+\end{description}
+
+The three backend tiers run on Linux/Mesos.
+
+\end{frame}
+
+
+\begin{frame}[containsverbatim]
+  \frametitle{Server Architecture Diagram}
+\includegraphics[height=0.85\textheight]{BatchArch.png} 
+\end{frame}
+
+
+\end{document}
+
+
