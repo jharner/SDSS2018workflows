@@ -1,12 +1,10 @@
 ---
-title: "Habits"
+title: "Data Science Workflows"
 author: "Jim Harner"
 date: "5/6/18"
 output:
   slidy_presentation: default
 ---
-
-# Introduction
 
 ## The Data Science Process
 
@@ -16,14 +14,23 @@ The data science workflow or process starts with data extraction and end with a 
 
 This diagram is taken from [Doing Data Science](http://shop.oreilly.com/product/0636920028529.do). Notice the flow along the top where data is collected, processed, cleaned, and explored. Many conflate data science with the box on the right, i.e., machine learning algorithms and statistical models, but it is much more that that. Ultimately, we want to make decisions or to create data products, an iterative process.
 
+## Operational Components
+
+- R/RStudio
+
+- Hadoop: an open-source framework for large-scale data storage and distributed computing, built on the MapReduce model.
+
+- Spark
+
 ## Batch Architecture
 
-![Batch Architecture](workflows-figure/BatchArch.png) 
+![](workflows-figure/BatchArch.png) 
 
+See O'Reilly's [Fast Data Architectures for Streaming Applications](http://www.oreilly.com/data/free/fast-data-architectures-for-streaming-applications.csp)
 
 ## Streaming Architecture
 
-![Streaming Architecture](workflows-figure/StreamArch.png) 
+![](workflows-figure/StreamArch.png) 
 
 
 ## Hadley's Tidyverse
