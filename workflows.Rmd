@@ -10,7 +10,7 @@ output:
 
 The data science workflow or process starts with data extraction and end with a data produce. A common version of this process is illustrated by:   
 
-![The Data Science Process](workflows-figure/dsciProcess.png)  
+![The Data Science Process](workflow-figures/dsciProcess.png)  
 
 This diagram is taken from [Doing Data Science](http://shop.oreilly.com/product/0636920028529.do). Notice the flow along the top where data is collected, processed, cleaned, and explored. Many conflate data science with the box on the right, i.e., machine learning algorithms and statistical models, but it is much more that that. Ultimately, we want to make decisions or to create data products, an iterative process.
 
@@ -24,13 +24,13 @@ This diagram is taken from [Doing Data Science](http://shop.oreilly.com/product/
 
 ## Batch Architecture
 
-![](workflows-figure/BatchArch.png) 
+![](workflow-figures/BatchArch.png) 
 
 See O'Reilly's [Fast Data Architectures for Streaming Applications](http://www.oreilly.com/data/free/fast-data-architectures-for-streaming-applications.csp)
 
 ## Streaming Architecture
 
-![](workflows-figure/StreamArch.png) 
+![](workflow-figures/StreamArch.png) 
 
 
 ## Hadley's Tidyverse
