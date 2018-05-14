@@ -14,13 +14,27 @@ The data science workflow or process starts with data extraction and end with a 
 
 This diagram is taken from [Doing Data Science](http://shop.oreilly.com/product/0636920028529.do). Notice the flow along the top where data is collected, processed, cleaned, and explored. Many conflate data science with the box on the right, i.e., machine learning algorithms and statistical models, but it is much more that that. Ultimately, we want to make decisions or to create data products, an iterative process.
 
-## Operational Components
+## Hadley's Tidyverse
 
-- R/RStudio
+Hadley Wickham has a more abbreviated and specific version given here: [R for Data Science](http://r4ds.had.co.nz/introduction.html#what-you-will-learn).
+
+It focuses on:
+
+- `tidyr` to make data tidy,  
+- `dplyr` for transforming the data,  
+- `ggplot2` for visualization, and others.  
+
+## Minimal Operational Components for Big Data
+
+- R/RStudio: an environment for statistical computing and graphics; an integrated development environment for R.
+
+- PostgreSQL: an object-relational database system.
 
 - Hadoop: an open-source framework for large-scale data storage and distributed computing, built on the MapReduce model.
 
-- Spark
+- Hive: a data warehouse for reading, writing, and managing large datasets residing in distributed storage using SQL.
+
+- Spark: an analytics engine for large-scale data processing.
 
 ## Batch Architecture
 
@@ -32,25 +46,49 @@ See O'Reilly's [Fast Data Architectures for Streaming Applications](http://www.o
 
 ![](workflow-figures/StreamArch.png) 
 
+## Commercial Implementatons
 
-## Hadley's Tidyverse
+- AWS    
+- Blue Data  
+- Cloudera   
+- Hortonworks  
+- H2O  
+- IBM   
+- SAS Viya  
 
-Hadley Wickham has a more abbreviated and specific version given here: [R for Data Science](http://r4ds.had.co.nz/introduction.html#what-you-will-learn).
-
-It focuses on:
-
-- `tidyr` to make data tidy,
-- `dplyr` for transforming the data,
-- `ggplot2` for visualization, and others.
+## Rocker
 
 A Dockerized versions of R called <[rocker](http://github.com/rocker-org/rocker)> is available.  The Docker image `verse` adds the `rstudio`, `tidyverse`, and `verse` layers to the `r-ver` base image. The tidyverse can be spun up with the following bash command:
 ```
 sudo docker run -p 8787:8787 rocker/verse
 ```
 
-## Rspark
+## RSpark
 
 `rspark` extends `rocker` to the Spark ecosystem. The GitHub repo for `rspark` can be found [here](http://github.com/jharner/rspark). `rspark` consists of containers for RStudio, PostgreSQL, Hadoop, Hive, and Spark. By default, Spark has a master and two workers although it can also be run within the RStudio container as an option.
+
+## Workflows and ML Pipelines
+
+Workflows can be developed in many environments, e.g., the pipe operator (`|`) in UNIX or the pipe operator (`%>%`) in R. 
+
+ML pipelines have a more specific API inspired by the [scikit-learn](http://scikit-learn.org/stable/) project.
+
+## Example: Concrete Test Data
+
+rspark-notes:  
+
+  chapter 5, section 3  
+  
+  chapter 7, section 1  
+  
+  chapter 10, section 2
+  
+  
+## ML Pipelines
+
+
+
+
 
 
 
