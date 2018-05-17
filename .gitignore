@@ -6,3 +6,5 @@
 *.Rproj
 *.html
 *.pdf
+*.log
+metastore_db/

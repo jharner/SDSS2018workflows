@@ -1,7 +1,7 @@
 ---
-title: "Data Science Workflows"
-author: "Jim Harner"
-date: "5/6/18"
+title: "SDSS 2018: Data Science Workflows"
+author: "Jim Harner, West Virginia University"
+date: "May 17, 2018"
 output:
   slidy_presentation: default
 ---
@@ -48,13 +48,13 @@ See O'Reilly's [Fast Data Architectures for Streaming Applications](http://www.o
 
 ## Commercial Implementatons
 
-- AWS    
-- Blue Data  
+- [AWS](https://aws.amazon.com): compute, storage, database services, etc., including Elastic Container Service 
+- [Blue Data](https://www.bluedata.com): Spark and TensorFlow using containers and GPUs
 - Cloudera   
 - Hortonworks  
-- H2O  
-- IBM   
-- SAS Viya  
+- [H2O](https://www.h2o.ai/): AutoML, AI with GPUs
+- [IBM](https://www.ibm.com/analytics/)   
+- SAS Viya
 
 ## Rocker
 
@@ -62,32 +62,166 @@ A Dockerized versions of R called <[rocker](http://github.com/rocker-org/rocker)
 ```
 sudo docker run -p 8787:8787 rocker/verse
 ```
+Looks for the image locally and if not found, looks on hub.docker.com.
 
 ## RSpark
 
 `rspark` extends `rocker` to the Spark ecosystem. The GitHub repo for `rspark` can be found [here](http://github.com/jharner/rspark). `rspark` consists of containers for RStudio, PostgreSQL, Hadoop, Hive, and Spark. By default, Spark has a master and two workers although it can also be run within the RStudio container as an option.
 
+See [rspark](https://github.com/jharner/rspark)
+
 ## Workflows and ML Pipelines
 
-Workflows can be developed in many environments, e.g., the pipe operator (`|`) in UNIX or the pipe operator (`%>%`) in R. 
+Workflows can be developed in many environments, e.g., the pipe operator (`|`) in UNIX.
+
+```
+cat short.csv | ./mapper.R | sort | ./analysis.R
+```
+The flow is based on standard output (stdout) and standard input (stdin).
+
+Then can be automated using Hadoop's MapReduce.
+
+## dplyr Workflows
+
+Workflows in R are accomplished using the pipe operator (`%>%`) often in conjunction with `dplyr`.
+
+```{r}
+library(dplyr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE)
+library(RPostgreSQL,  quietly = TRUE)
+library(ggplot2)
+drv <- dbDriver("PostgreSQL")
+con <- dbConnect(drv, host="postgres", dbname='dataexpo')
+dbGetQuery(con,
+    "select round(l.elevation/500)*500 base_elev, avg(m.surftemp) avg_temp
+    from measure_table m
+    join location_table l on m.location = l.id 
+    join date_table d on m.date = d.id
+    where d.year = 1998 
+    group by base_elev 
+    order by base_elev") %>%
+  ggplot(aes(x=base_elev, y=avg_temp)) +
+  geom_line() + geom_point() +
+  labs(title=" Avg Temperature by Elevation",
+       x="Base Elevation (feet)", y="Average Temperature(Kelvin)")
+```
+
+## dplyr Spark Workflow
+
+```{r}
+library(sparklyr)
+library(nycflights13)
+sc <- spark_connect("local")
+flights_sdf <- sdf_copy_to(sc, flights, "flights_sdf",  overwrite = TRUE)
+airlines_sdf <- sdf_copy_to(sc, airlines, "airlines_sdf", overwrite = TRUE)
+flights_sdf %>% left_join(airlines_sdf, by = "carrier") %>%
+  select(carrier, name, flight, year:day, arr_delay, dep_delay) %>%
+  filter(dep_delay > 1000) %>%
+  arrange(desc(dep_delay))
+```
+
+## dplyr R Workflow
+
+```{r}
+flights_df <- dbGetQuery(sc, "SELECT * FROM flights_sdf")
+airlines_df <- dbGetQuery(sc, "SELECT * FROM airlines_sdf")
+flights_df %>%
+  left_join(airlines_df, by = "carrier") %>%
+  select(carrier, name, flight, year:day, arr_delay, dep_delay) %>%
+  filter(dep_delay > 1000) %>%
+  arrange(desc(dep_delay))
+```
+
+## HDFS Spark Regression Workflow
+
+```{r}
+library(rhdfs, quietly = TRUE, verbose = FALSE)
+hdfs.init()
+# execute the first time
+# hdfs.mkdir("data")
+if(hdfs.exists("data/slump.csv") != TRUE)
+  hdfs.put("/home/rstudio/rspark-notes/c5_sparkr/s3_sparkr_ml/slump.csv",
+           "hdfs://hadoop:9000/user/rstudio/data/")
+hdfs.ls("hdfs://hadoop:9000/user/rstudio/data/", recurse = TRUE)
+slump_sdf <- spark_read_csv(sc, "slump_sdf",
+                            path = "hdfs://hadoop:9000/user/rstudio/data/slump.csv")
+slump_partition <- tbl(sc, "slump_sdf") %>%
+  sdf_partition(training = 0.7, test = 0.3, seed = 2)
+slump_partition$training %>%
+  ml_linear_regression(compressive_strength ~ cement + slag + fly_ash + water + sp 
+                       + coarse_aggr + fine_aggr + slump + flow) %>%
+tidy()
+```
+
+
+## ML Pipelines
 
 ML pipelines have a more specific API inspired by the [scikit-learn](http://scikit-learn.org/stable/) project.
 
-## Example: Concrete Test Data
+Spark Pipeline API
 
-rspark-notes:  
+- Transformer: transforms one DataFrame into another DataFrame, e.g., ML model is a Transformer which transforms a DataFrame with features into a DataFrame with predictions.
 
-  chapter 5, section 3  
+- Estimator: trains an algorithm on a DataFrame to produce a Transformer, e.g., a learning algorithm is an Estimator which trains on a DataFrame and produces a model.
+
+- Pipeline: chains multiple Transformers and Estimators together to specify an ML workflow.
   
-  chapter 7, section 1  
-  
-  chapter 10, section 2
-  
-  
-## ML Pipelines
+## Preparation for Logistic Regression on Flights Data
+
+```{r}
+partitioned_flights <- sdf_partition(
+  flights_sdf,
+  training = 0.01,
+  testing = 0.01,
+  rest = 0.98
+)
+flights_transf_sdf <- flights_sdf %>%
+  filter(!is.na(dep_delay)) %>%
+  mutate(
+    month = paste0("m", month),
+    day = paste0("d", day)
+  ) %>%
+  select(dep_delay, sched_dep_time, month, day, distance)
+```
+
+## Definition of Logistic Regression Pipeline
+
+```{r}
+flights_pipeline <- ml_pipeline(sc) %>%
+  ft_dplyr_transformer(
+    tbl = flights_transf_sdf
+    ) %>%
+  ft_binarizer(
+    input.col = "dep_delay",
+    output.col = "delayed",
+    threshold = 15
+  ) %>%
+  ft_bucketizer(
+    input.col = "sched_dep_time",
+    output.col = "hours",
+    splits = c(400, 800, 1200, 1600, 2000, 2400)
+  )  %>%
+  ft_r_formula(delayed ~ month + day + hours + distance) %>% 
+  ml_logistic_regression()
+```
+
+## Fitted Logistic Regression
+
+```{r}
+ml_fit(
+  flights_pipeline,
+  partitioned_flights$training
+) %>%
+ml_transform(
+  partitioned_flights$testing
+) %>%
+group_by(delayed, prediction) %>%
+  tally()
+```
 
 
-
+```{r}
+spark_disconnect(sc)
+```
 
 
 
